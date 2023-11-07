@@ -11,15 +11,17 @@ import android.widget.TextView;
 
 import java.util.ArrayList;
 
-public class ListAdapter extends BaseAdapter {
+public class ListAdapterStudents extends BaseAdapter {
 
-   private ArrayList<Class> classes;
+   private ArrayList<Student> classes;
    private Context context;
    private TextView tvText;
+   private int idClass;
 
-   public ListAdapter(ArrayList<Class> classes, Context context) {
+   public ListAdapterStudents(ArrayList<Student> classes, Context context,int idClass) {
       this.classes = classes;
       this.context = context;
+      this.idClass = idClass;
    }
 
    @Override
@@ -45,14 +47,16 @@ public class ListAdapter extends BaseAdapter {
       @SuppressLint("ViewHolder") View inflate = inflater.inflate(R.layout.list_item, null);
 
       tvText = inflate.findViewById(R.id.tvText);
-      tvText.setOnLongClickListener(new View.OnLongClickListener() {
+      Student student = classes.get(i);
+      tvText.setText(String.format("%s %s", student.getFirstName(), student.getLastName()));
+      tvText.setOnClickListener(new View.OnClickListener() {
          @Override
-         public boolean onLongClick(View view) {
+         public void onClick(View view) {
             Intent intent = new Intent(context, ClassEditor.class);
-            Class aClass = classes.get(i);
-            intent.putExtra("Class Id", aClass.getId());
-            intent.putExtra("Class Id", aClass.getClassName());
-            return true;
+            Student aClass = classes.get(i);
+            intent.putExtra("Class Id", idClass);
+            intent.putExtra("Student Id", aClass.getId());
+
          }
       });
 

@@ -73,4 +73,92 @@ public class Database {
 
     }
 
+    public void deleteClass(int idClass) throws SQLException {
+        String delete = "DELETE FROM 'classes' WHERE 'ID' = " +
+                idClass +
+                " ;";
+        statement.execute(delete);
+        String drop1 = "DROP TABLE '" + idClass + "' - Sessions;";
+        String drop2 = "DROP TABLE '" + idClass + "' - Students;";
+        statement.execute(drop1);
+        statement.execute(drop2);
+
+    }
+
+    public ArrayList<Student> getStudents(int idClass) throws SQLException {
+        ArrayList<Student> list = new ArrayList<>();
+
+        String select = "SELECT * FROM '" + idClass + " - Students'";
+        ResultSet rs = statement.executeQuery(select);
+
+        while (rs.next()) {
+            Student class1 = new Student(rs.getInt("ID"), rs.getString("FirstName"), rs.getString("LastName"), rs.getString("Email"), rs.getString("Telephone"));
+            list.add(class1);
+        }
+
+
+        return list;
+    }
+    public int getNextStudentID(int idStudent) throws SQLException {
+        int id = 0;
+
+        ArrayList<Student> classes = getStudents(idStudent);
+        int size = classes.size();
+        if (size != 0) {
+            int last = size - 1;
+            Student lastClass = classes.get(last);
+            id = lastClass.getId() + 1;
+        }
+
+        return id;
+    }
+
+    public Student getStudents(int idClass, int studentId) throws SQLException {
+        String select = "SELECT 'ID','FirstName','LastName','Email','Telephone', FROM '" + idClass + " - Students' WHERE 'ID' = " + studentId + ";";
+        ResultSet rs = statement.executeQuery(select);
+        rs.next();
+        Student class1 = new Student(rs.getInt("ID"), rs.getString("FirstName"), rs.getString("LastName"), rs.getString("Email"), rs.getString("Telephone"));
+
+
+        return class1;
+    }
+
+    public void addClass(Student classContent, int classID) throws SQLException {
+        String insert = "INSERT INTO '" +
+                classID +
+                " - Students' ('ID','FirstName','LastName','Email','Telephone') VALUES ('" +
+                classContent.getId() +
+                "','" +
+                classContent.getFirstName() +
+                "','" +
+                classContent.getLastName() +
+                "','" +
+                classContent.getEmail() +
+                "','" +
+                classContent.getTelephone() +
+                "');";
+
+        statement.execute(insert);
+
+    }
+
+
+    public void updateClass(Student classContent, int classID) throws SQLException {
+        String insert = "UPDATE '" +
+                classID +
+                " - Students' SET ('FirstName' = '" +
+                classContent.getFirstName() +
+                "','LastName' = '" +
+                classContent.getLastName() +
+                "','Email' = '" +
+                classContent.getEmail() +
+                "','Telephone' = '" +
+                classContent.getTelephone() +
+                "' WHERE 'ID' = " +
+                classContent.getId() +
+                ");";
+
+        statement.execute(insert);
+
+    }
 }
