@@ -1,5 +1,7 @@
 package com.example.attendancemanagerandroid;
 
+import androidx.collection.ArraySet;
+
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
@@ -161,4 +163,118 @@ public class Database {
         statement.execute(insert);
 
     }
+
+    public void deleteClass(int classContent, int classID) throws SQLException {
+        String delete = "DELETE FROM '" +
+                classID +
+                " - Students' WHERE 'ID' = " +
+                classContent +
+                ";";
+
+        statement.execute(delete);
+
+    }
+
+
+    public ArrayList<Session> getSessions(int idClass) throws SQLException {
+        ArrayList<Session> list = new ArrayList<>();
+
+        String select = "SELECT * FROM '" + idClass + " - Sessions'";
+        ResultSet rs = statement.executeQuery(select);
+
+        while (rs.next()) {
+            Session class1 = new Session();
+            class1.setId(rs.getInt("ID"));
+            class1.setSubject(rs.getString("Subject"));
+            class1.setDate(rs.getString("Date"));
+            list.add(class1);
+        }
+
+
+        return list;
+    }
+    public int getNextSessionID(int idStudent) throws SQLException {
+        int id = 0;
+
+        ArrayList<Session> classes = getSessions(idStudent);
+        int size = classes.size();
+        if (size != 0) {
+            int last = size - 1;
+            Session lastClass = classes.get(last);
+            id = lastClass.getId() + 1;
+        }
+
+        return id;
+    }
+
+    public void addSession(Session classContent, int classID) throws SQLException {
+        String insert = "INSERT INTO '" +
+                classID +
+                " - Students' ('ID','Subject','Date') VALUES ('" +
+                classContent.getId() +
+                "','" +
+                classContent.getSubject() +
+                "','" +
+                classContent.getDate() +
+                "');";
+
+        statement.execute(insert);
+
+
+        String create1 = "CREATE TABLE IF NOT EXISTS '" +
+                classID + " - " +
+                classContent.getId() +
+                "" +
+                "' ('ID' integer)";
+
+        statement.execute(create1);
+
+    }
+    public Session getSession(int idClass, int sessionId) throws SQLException {
+        Session session = new Session();
+
+        String select = "SELECT ID, Subject, Date FROM '" + idClass + " - Sessions' WHERE ID = " +
+                idClass +
+                ";";
+        ResultSet rs = statement.executeQuery(select);
+        rs.next();
+
+        session.setId(rs.getInt("ID"));
+        session.setSubject(rs.getString("Subject"));
+        session.setDate(rs.getString("Date"));
+
+        select = "SELECT * FROM '" + idClass + " - " +
+                sessionId +
+                "';";
+        rs = statement.executeQuery(select);
+        ArrayList<Integer> listIds = new ArrayList<>();
+
+        while (rs.next()) {
+            listIds.add(rs.getInt("ID"));
+        }
+        ArrayList<Student> listStudents = new ArrayList<>();
+
+        for (int idStudent : listIds) {
+            listStudents.add(getStudents(idClass, idStudent));
+        }
+        session.setStudents(listStudents);
+
+        return session;
+    }
+
+    public void updateSessionData(Session classContent, int classID) throws SQLException {
+        String insert = "UPDATE '" +
+                classID +
+                " - Sessions' SET ('Subject' = '" +
+                classContent.getSubject() +
+                "','Date' = '" +
+                classContent.getDate() +
+                "' WHERE 'ID' = " +
+                classContent.getId() +
+                ");";
+
+        statement.execute(insert);
+
+    }
+
 }

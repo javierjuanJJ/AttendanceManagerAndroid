@@ -14,6 +14,10 @@ public class Session {
         this.date = date;
     }
 
+    public Session() {
+
+    }
+
     public int getId() {
         return id;
     }

@@ -11,25 +11,27 @@ import android.widget.TextView;
 
 import java.util.ArrayList;
 
-public class ListAdapter extends BaseAdapter {
+public class ListAdapterSessions extends BaseAdapter {
 
-   private ArrayList<Class> classes;
+   private ArrayList<Session> sessions;
    private Context context;
    private TextView tvText;
+   private int idClass;
 
-   public ListAdapter(ArrayList<Class> classes, Context context) {
-      this.classes = classes;
+   public ListAdapterSessions(ArrayList<Session> sessions, Context context, int idClass) {
+      this.sessions = sessions;
       this.context = context;
+      this.idClass = idClass;
    }
 
    @Override
    public int getCount() {
-      return classes.size();
+      return sessions.size();
    }
 
    @Override
    public Object getItem(int i) {
-      return classes.get(i);
+      return sessions.get(i);
    }
 
    @Override
@@ -45,27 +47,22 @@ public class ListAdapter extends BaseAdapter {
       @SuppressLint("ViewHolder") View inflate = inflater.inflate(R.layout.list_item, null);
 
       tvText = inflate.findViewById(R.id.tvText);
-      tvText.setOnClickListener(new View.OnClickListener() {
-         @Override
-         public void onClick(View view) {
-            Intent intent = new Intent(context, ClassEditor.class);
-            intent.putExtra("Class Id", classes.get(i).getId());
-            intent.putExtra("Class Name", classes.get(i).getClassName());
-            context.startActivity(intent);
-         }
-      });
-
+      Session student = sessions.get(i);
+      tvText.setText(student.getSubject() + " - " + student.getDate());
       tvText.setOnLongClickListener(new View.OnLongClickListener() {
          @Override
          public boolean onLongClick(View view) {
-            Intent intent = new Intent(context, ClassEditor.class);
-            Class aClass = classes.get(i);
-            intent.putExtra("Class ID", aClass.getId());
-            intent.putExtra("Class Name", aClass.getClassName());
+            Intent intent = new Intent(context, SessionEditor.class);
+            Session aClass = sessions.get(i);
+            intent.putExtra("Class Id", idClass);
+            intent.putExtra("Session Id", aClass.getId());
+            context.startActivity(intent);
             return true;
          }
       });
 
       return inflate;
    }
+
+
 }
