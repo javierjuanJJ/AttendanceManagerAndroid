@@ -2,7 +2,6 @@ package com.example.attendancemanagerandroid;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.os.StrictMode;
 import android.view.View;
@@ -13,20 +12,22 @@ import android.widget.ListView;
 import java.sql.SQLException;
 import java.util.ArrayList;
 
-public class ShowSessions extends AppCompatActivity {
+public class EditSessionStudents extends AppCompatActivity {
     private Button btnNewSession;
     private ListView lvSessions;
     private int classID,studentID;
     private Database database;
-    private ArrayList<Session> sessions;
+    private ArrayList<Student> listStudents;
+    private ArrayList<Integer> sesionsStudents, inserStudenrs, deletedStudents;
     private ListAdapterSessions listAdapter;
-
+    private int sessionID;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS, WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS);
-        setContentView(R.layout.activity_show_sessions);
+
+        setContentView(R.layout.activity_edit_session_students);
         StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
         StrictMode.setThreadPolicy(policy);
         setUI();
@@ -37,21 +38,40 @@ public class ShowSessions extends AppCompatActivity {
         lvSessions = findViewById(R.id.lvPresent);
 
         classID = getIntent().getIntExtra("Class ID", 0);
+        sessionID = getIntent().getIntExtra("Session ID", 0);
         database = new Database();
+        Session session =null;
+        ArrayList<Student> studentArrayList = null;
         try {
-            sessions = database.getSessions(classID);
+            listStudents = database.getStudents(classID);
+            session = database.getSession(classID, sessionID);
+            studentArrayList = session.getStudents();
+            sesionsStudents = new ArrayList<>();
+
+            for (Student s : studentArrayList) {
+                sesionsStudents.add(s.getId());
+            }
+
+            inserStudenrs = new ArrayList<>();
+            deletedStudents = new ArrayList<>();
+
         } catch (SQLException e) {
             e.printStackTrace();
         }
 
-        listAdapter = new ListAdapterSessions(sessions, getApplicationContext(),classID);
+        //listAdapter = new ListAdapterSessions(listStudents, getApplicationContext(),classID);
         lvSessions.setAdapter(listAdapter);
 
         btnNewSession.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(ShowSessions.this, SessionEditor.class);
-                startActivity(intent);
+                try {
+                    database.addStudentsToSession(classID,sessionID,inserStudenrs);
+                    database.removeStudentsFromSession(classID,sessionID,deletedStudents);
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+
             }
         });
     }
@@ -60,7 +80,7 @@ public class ShowSessions extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         try {
-            sessions = database.getSessions(classID);
+            listStudents = database.getStudents(classID);
         } catch (SQLException e) {
             e.printStackTrace();
         }

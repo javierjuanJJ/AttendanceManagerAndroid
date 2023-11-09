@@ -80,6 +80,11 @@ public class Database {
                 idClass +
                 " ;";
         statement.execute(delete);
+
+        for (Session s : getSessions(idClass)) {
+            deleteSession(idClass, s.getId());
+        }
+
         String drop1 = "DROP TABLE '" + idClass + "' - Sessions;";
         String drop2 = "DROP TABLE '" + idClass + "' - Students;";
         statement.execute(drop1);
@@ -276,5 +281,50 @@ public class Database {
         statement.execute(insert);
 
     }
+    public void deleteSession(int classId, int sessionId) throws SQLException {
+        String delete = "DELETE FROM '" +
+                classId+
+                " - Sessions' WHERE 'ID' = " +
+                sessionId +
+                ";";
 
-}
+        statement.execute(delete);
+
+
+        delete = "DROP TABLE '" +
+                classId+
+                " - " +
+                sessionId+
+                ";";
+
+        statement.execute(delete);
+
+    }
+
+    public void addStudentsToSession(int classId, int sessionId, ArrayList<Integer> students) throws SQLException {
+        for (Integer idStudent : students) {
+            String insert = "INSERT INTO '" +
+                    classId +
+                    " - " +
+                    sessionId +
+                    "' VALUES ('" +
+                    idStudent +
+                    "') ";
+            statement.execute(insert);
+        }
+    }
+
+    public void removeStudentsFromSession(int classId, int sessionId, ArrayList<Integer> students) throws SQLException {
+        for (Integer idStudent : students) {
+            String insert = "DELETE FROM '" +
+                    classId +
+                    " - " +
+                    sessionId +
+                    "' VALUES ('" +
+                    idStudent +
+                    "') ";
+            statement.execute(insert);
+        }
+    }
+
+    }

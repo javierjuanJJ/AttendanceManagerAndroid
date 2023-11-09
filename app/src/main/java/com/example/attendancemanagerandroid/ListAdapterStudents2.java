@@ -6,32 +6,34 @@ import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AbsListView;
 import android.widget.BaseAdapter;
+import android.widget.ListView;
 import android.widget.TextView;
 
 import java.util.ArrayList;
 
-public class ListAdapterSessions extends BaseAdapter {
+public class ListAdapterStudents2 extends BaseAdapter {
 
-   private ArrayList<Session> sessions;
+   private ArrayList<Student> classes;
    private Context context;
    private TextView tvText;
    private int idClass;
 
-   public ListAdapterSessions(ArrayList<Session> sessions, Context context, int idClass) {
-      this.sessions = sessions;
+   public ListAdapterStudents2(ArrayList<Student> classes, Context context, int idClass) {
+      this.classes = classes;
       this.context = context;
       this.idClass = idClass;
    }
 
    @Override
    public int getCount() {
-      return sessions.size();
+      return classes.size();
    }
 
    @Override
    public Object getItem(int i) {
-      return sessions.get(i);
+      return classes.get(i);
    }
 
    @Override
@@ -47,33 +49,22 @@ public class ListAdapterSessions extends BaseAdapter {
       @SuppressLint("ViewHolder") View inflate = inflater.inflate(R.layout.list_item, null);
 
       tvText = inflate.findViewById(R.id.tvText);
-      Session student = sessions.get(i);
-      tvText.setText(student.getSubject() + " - " + student.getDate());
-      tvText.setOnLongClickListener(new View.OnLongClickListener() {
-         @Override
-         public boolean onLongClick(View view) {
-            Intent intent = new Intent(context, SessionEditor.class);
-            Session aClass = sessions.get(i);
-            intent.putExtra("Class Id", idClass);
-            intent.putExtra("Session Id", aClass.getId());
-            context.startActivity(intent);
-            return true;
-         }
-      });
-
+      Student student = classes.get(i);
+      tvText.setText(String.format("%s %s", student.getFirstName(), student.getLastName()));
       tvText.setOnClickListener(new View.OnClickListener() {
          @Override
          public void onClick(View view) {
-            Intent intent = new Intent(context, ViewSessions.class);
-            Session aClass = sessions.get(i);
+            Intent intent = new Intent(context, ClassEditor.class);
+            Student aClass = classes.get(i);
             intent.putExtra("Class Id", idClass);
-            intent.putExtra("Session Id", aClass.getId());
-            context.startActivity(intent);
+            intent.putExtra("Student Id", aClass.getId());
+
          }
       });
 
       return inflate;
    }
+
 
 
 }

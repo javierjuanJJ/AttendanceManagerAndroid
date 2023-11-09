@@ -2,7 +2,6 @@ package com.example.attendancemanagerandroid;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import android.app.WallpaperManager;
 import android.os.Bundle;
 import android.os.StrictMode;
 import android.view.View;
@@ -36,11 +35,11 @@ public class StudentEditor extends AppCompatActivity {
 
     private void setUI() {
 
-        tvIdStudentEditor = findViewById(R.id.tvIdStudentEditor);
+        tvIdStudentEditor = findViewById(R.id.tvIdSessionEditor);
         tvDelete = findViewById(R.id.tvDelete);
 
-        etfirstNme = findViewById(R.id.etfirstNme);
-        etLastNme = findViewById(R.id.etLastNme);
+        etfirstNme = findViewById(R.id.etSubject);
+        etLastNme = findViewById(R.id.etDate);
         etEmail = findViewById(R.id.etEmail);
         etTelephone = findViewById(R.id.etTelephone);
 
